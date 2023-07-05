@@ -1,74 +1,70 @@
 #include<bits/stdc++.h>
 using namespace std;
-void merge(int* arr, int s, int e){
-    int m= s+(e-s)/2;
-    int l1= m-s+1;
-    int l2= e-m;
-    int* left= new int[l1];
-    int* right= new int[l2];
-    int k= s;
-    for(int i= 0; i< l1; i++){
-        left[i]= arr[k];
-        k++;
+int partition(int arr[], int s, int e){
+    // choose pivot index
+    int pivotIndex= s;
+    int pivotElement= arr[s];
+    // step2: find right position for pivot element and place it there
+    int count= 0;
+    for(int i= s+1; i<= e; i++){
+        if(arr[i]<= pivotElement){
+            count++;
+        }
     }
-    for(int j= 0; j< l2; j++){
-        right[j]= arr[k];
-        k++;
-    }
-    int i= 0;
-    int j= 0;
-    k= s;
-    while(i< l1 && j< l2){
-        if(left[i]< right[j]){
-            arr[k]= left[i];
+    // jab mai bahar aaya mere paas pivot k righht index ready hai
+    int rightIndex= s+count;
+    swap(arr[pivotIndex], arr[rightIndex]);
+    pivotIndex= rightIndex;
+    // step3:
+    int i= s;
+    int j= e;
+    while(i< pivotIndex && j> pivotIndex){
+        while(arr[i]<= arr[pivotIndex]){
             i++;
-            k++;
         }
-        else{
-            arr[k]= right[j];
-            j++;
-            k++;
+        while(arr[j]> arr[pivotIndex]){
+            j--;
         }
-    }
-    while(i< l1){
-        arr[k]= left[i];
-        k++;
-        i++;
-    }
-    while(i< l1){
-        arr[k]= left[i];
-        k++;
-        i++;
+        // you found the elements to swap
+        // no need to swap
+        if(i< pivotIndex && j> pivotIndex){
+            swap(arr[i], arr[j]);
+        }
+        return pivotIndex;
+
     }
 
-     
 }
-void mergeSort(int* arr, int s, int e){
-    // base case
-    // single element
-    if(s== e){
+void quickSort(int arr[], int s, int e){
+    // base case: single element already sorted and s>= e: invalid array
+    if(s>= e){
+    // we can do: s>e || s== e
         return;
     }
-    int m= s+(e-s)/2;
-    // recursion solve kar dega
-    // left wala part recursion solve kar diya
-    mergeSort(arr, s, m);
-    // right wala part recursion solve kar diya
-    mergeSort(arr, m+1, e);
-    // now merge 2 sorted arrays
-    merge(arr, s, e);
-
-
+    // partiiton login
+    int p= partition(arr, s, e);
+    // recursive call
+    // left call
+    quickSort(arr, s, p-1);
+    // right call
+    quickSort(arr, p+1, e);
 }
 int main(){
-   int arr[]= {4, 5, 13, 2, 12};
-   int n= 5;
+   int arr[]= {8, 1, 3, 4, 20, 50, 30};
+   int n= 7;
    int s= 0;
    int e= n-1;
-   mergeSort(arr, s, e);
+   quickSort(arr, s, e);
    for(int i= 0; i< n; i++){
     cout<<arr[i]<<" ";
-    }cout<<endl;
-
+   }cout<<endl;
+   int brr[]= {8, 1, 3, 4, 20, 50, 50, 50,30, 30, 4};
+   int n2= 11;
+   s= 0;
+   e= n2-1;
+   quickSort(brr, s, e);
+    for(int i= 0; i< n2; i++){
+    cout<<brr[i]<<" ";
+   }cout<<endl;
    return 0;
 }
